@@ -12,7 +12,6 @@ void main() {
             children:[
               username,
               password,
-              repeatPassword,
               button,
             ]
         ),
@@ -26,10 +25,6 @@ Widget username = TextField (
 );
 
 Widget password = TextField (
-
-);
-
-Widget repeatPassword = TextField (
 
 );
 
