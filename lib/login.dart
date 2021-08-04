@@ -1,34 +1,48 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(
-    MaterialApp(
-      title: 'Register',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Register'),
-          ),
-        body: ListView(
-            children:[
-              username,
-              password,
-              button,
-            ]
-        ),
-      ),
-    ),
-  );
+class SignInPage extends StatefulWidget {
+  @override
+  _SignInState createState() => _SignInState();
 }
 
-Widget username = TextField (
-
-);
-
-Widget password = TextField (
-
-);
-
-Widget button = ElevatedButton(
-    onPressed: null,
-    child: const Text('Register'),
-);
+class _SignInState extends State<SignInPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sign in Page'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Username',
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Password',
+                ),
+              ),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  //TODO: implement log in code
+                },
+                child: Text('Log in')),
+          ],
+        ),
+      ),
+    );
+  }
+}
