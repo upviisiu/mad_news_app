@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mad_news_app/news items/Newspage.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -36,8 +37,10 @@ class _SignInState extends State<SignInPage> {
               ),
             ),
             ElevatedButton(
+              //TODO: implement log in code, current code redirects to news page
                 onPressed: () {
-                  //TODO: implement log in code
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => NewsPage()));
                 },
                 child: Text('Log in')),
           ],

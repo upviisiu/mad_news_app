@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mad_news_app/login.dart';
-import 'package:mad_news_app/register.dart';
+import 'package:mad_news_app/Login/Login.dart';
+import 'package:mad_news_app/Login/Register.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   _MyHomePageState createState() => _MyHomePageState();
