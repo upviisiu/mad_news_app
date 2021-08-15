@@ -37,7 +37,7 @@ class _SignInState extends State<SignInPage> {
               ),
             ),
             ElevatedButton(
-              //TODO: implement log in code, current code redirects to news page
+                //TODO: implement log in code, current code redirects to news page
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => NewsPage()));
