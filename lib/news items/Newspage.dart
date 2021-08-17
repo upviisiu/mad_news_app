@@ -16,6 +16,8 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsState extends State<NewsPage> {
+  String apiUrl =
+      'http://api.mediastack.com/v1/news?access_key=7bcf8c4596abf9cff9e3ff632c5138d0&languages=en&limit=26';
   int countValue = 2;
   num aspectWidth = 2;
   num aspectHeight = 1;
@@ -38,10 +40,16 @@ class _NewsState extends State<NewsPage> {
     }
   }
 
+  updateFeed(var result) {
+    setState(() {
+      futureNews = fetchFeed(result);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    futureNews = fetchFeed();
+    futureNews = fetchFeed("");
   }
 
   @override
@@ -50,6 +58,13 @@ class _NewsState extends State<NewsPage> {
       appBar: AppBar(
         title: Text('Newsfeed'),
         actions: <Widget>[
+          IconButton(
+              onPressed: () async {
+                final result =
+                    await showSearch(context: context, delegate: Search());
+                result == null ? updateFeed("") : updateFeed(result);
+              },
+              icon: Icon(Icons.search)),
           IconButton(
               onPressed: changeMode,
               icon: countValue == 2
@@ -80,15 +95,62 @@ class _NewsState extends State<NewsPage> {
     );
   }
 
-  Future<Feed> fetchFeed() async {
-    String url =
-        'http://api.mediastack.com/v1/news?access_key=7bcf8c4596abf9cff9e3ff632c5138d0&languages=en';
-    final response = await http.get(Uri.parse(url));
+  Future<Feed> fetchFeed(String? string) async {
+    string = string.toString();
+    string = string.replaceAll(' ', '%20');
+    String searchUrl = "&keywords=" + string;
+
+    if (string != "") {
+      apiUrl += "$searchUrl";
+    }
+    final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
       return Feed.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to load Album');
+      throw Exception('Failed to load Feed');
     }
+  }
+}
+
+//search
+class Search extends SearchDelegate<String> {
+  var result = '';
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+          onPressed: () {
+            query = '';
+          },
+          icon: Icon(Icons.clear))
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          close(context, result);
+        },
+        icon: Icon(Icons.arrow_back));
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    result = query;
+    close(context, result);
+    return ListTile();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return ListTile(
+      subtitle: Text(
+        "Enter search terms",
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 }
