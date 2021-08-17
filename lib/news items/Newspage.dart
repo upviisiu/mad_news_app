@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as http;
 import 'package:mad_news_app/Widgets/ArticleViewer.dart';
 
@@ -19,9 +20,14 @@ class _NewsState extends State<NewsPage> {
   String apiUrl =
       'http://api.mediastack.com/v1/news?access_key=7bcf8c4596abf9cff9e3ff632c5138d0&languages=en&limit=26';
   int countValue = 2;
+  int offset = 0;
   num aspectWidth = 2;
   num aspectHeight = 1;
   late Future<Feed> futureNews;
+
+  updateApiUrl(String string) {
+    apiUrl += string;
+  }
 
   //Gridview swap shenanigans
   changeMode() {
@@ -40,16 +46,17 @@ class _NewsState extends State<NewsPage> {
     }
   }
 
-  updateFeed(var result) {
+  updateFeed() {
+    print(apiUrl);
     setState(() {
-      futureNews = fetchFeed(result);
+      futureNews = fetchFeed();
     });
   }
 
   @override
   void initState() {
     super.initState();
-    futureNews = fetchFeed("");
+    futureNews = fetchFeed();
   }
 
   @override
@@ -62,7 +69,8 @@ class _NewsState extends State<NewsPage> {
               onPressed: () async {
                 final result =
                     await showSearch(context: context, delegate: Search());
-                result == null ? updateFeed("") : updateFeed(result);
+                updateApiUrl(result.toString());
+                updateFeed();
               },
               icon: Icon(Icons.search)),
           IconButton(
@@ -92,17 +100,40 @@ class _NewsState extends State<NewsPage> {
           },
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: IconButton(
+              onPressed: () {
+                offset >= 26
+                    ? offset -= 26
+                    : throw Exception('Offset is too low');
+                offset >= 0
+                    ? updateApiUrl("&offset=" + offset.toString())
+                    : throw Exception('Offset is too low');
+                updateFeed();
+              },
+              icon: Icon(Icons.arrow_back),
+            ),
+            title: Text("Previous"),
+          ),
+          BottomNavigationBarItem(
+            icon: IconButton(
+              onPressed: () {
+                offset += 26;
+                updateApiUrl("&offset=" + offset.toString());
+                updateFeed();
+              },
+              icon: Icon(Icons.arrow_forward),
+            ),
+            title: Text("Next"),
+          )
+        ],
+      ),
     );
   }
 
-  Future<Feed> fetchFeed(String? string) async {
-    string = string.toString();
-    string = string.replaceAll(' ', '%20');
-    String searchUrl = "&keywords=" + string;
-
-    if (string != "") {
-      apiUrl += "$searchUrl";
-    }
+  Future<Feed> fetchFeed() async {
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
@@ -132,6 +163,11 @@ class Search extends SearchDelegate<String> {
   Widget buildLeading(BuildContext context) {
     return IconButton(
         onPressed: () {
+          result = query;
+          result.toString();
+          result = result.replaceAll(' ', '%20');
+          result = "&keywords=" + result;
+
           close(context, result);
         },
         icon: Icon(Icons.arrow_back));
