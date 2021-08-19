@@ -29,7 +29,7 @@ class ArticleViewer extends StatelessWidget {
         ),
         isThreeLine: true,
         onTap: () {
-          showNews(article.url);
+          goToNewsUrl(article.url);
         },
         trailing: IconButton(
           icon: Icon(Icons.star_border),
@@ -40,7 +40,7 @@ class ArticleViewer extends StatelessWidget {
     );
   }
 
-  showNews(String url) async {
+  goToNewsUrl(String url) async {
     if (await canLaunch(url))
       await launch(url);
     else

@@ -28,18 +28,4 @@ class Feed {
           json['data'].map((s) => Article.fromJson(s)).toList()),
     );
   }
-
-// Map<String, dynamic> toJson() => _$FeedToJson(this);
 }
-
-// Feed _$FeedFromJson(Map<String, dynamic> json) {
-//
-// }
-
-// Map<String, dynamic> _$FeedToJson(Feed instance) => <String, dynamic>{
-//       'limit': instance.limit,
-//       'offset': instance.offset,
-//       'count': instance.count,
-//       'total': instance.total,
-//       'articles': instance.articles,
-//     };
