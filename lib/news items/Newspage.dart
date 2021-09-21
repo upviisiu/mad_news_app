@@ -23,6 +23,29 @@ class _NewsState extends State<NewsPage> {
   int offset = 0;
   num aspectWidth = 2;
   num aspectHeight = 1;
+
+  //TODO: finish the sort shit
+  bool authorAsc = false;
+  bool titleAsc = false;
+  bool popularityAsc = false;
+  String language = "";
+  //ar - Arabic
+  //de - German
+  //en - English
+  //es - Spanish
+  //fr - French
+  //he - Hebrew
+  //it - Italian
+  // nl - Dutch
+  //no - Norwegian
+  //pt - Portuguese
+  //ru - Russian
+  //se - Swedish
+  //zh - Chinese
+  String country = "";
+  //https://mediastack.com/sources
+  bool dateAsc = false;
+
   late Future<Feed> futureNews;
 
   updateApiUrl(String string) {
@@ -36,12 +59,14 @@ class _NewsState extends State<NewsPage> {
         countValue = 1;
         aspectWidth = 3;
         aspectHeight = 1;
+        Navigator.pop(context);
       });
     } else {
       setState(() {
         countValue = 2;
         aspectWidth = 2;
         aspectHeight = 1;
+        Navigator.pop(context);
       });
     }
   }
@@ -74,11 +99,27 @@ class _NewsState extends State<NewsPage> {
               },
               icon: Icon(Icons.search)),
           IconButton(
-              onPressed: changeMode,
-              icon: countValue == 2
-                  ? const Icon(Icons.list)
-                  : const Icon(Icons.grid_view)),
+            onPressed: changeMode,
+            icon: Icon(Icons.keyboard_control),
+          ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                  //color: Colors.red,
+                  ),
+              child: null,
+            ),
+            ListTile(
+              title: Text("Change view"),
+              onTap: changeMode,
+            )
+          ],
+        ),
       ),
       body: Center(
         child: FutureBuilder<Feed>(
@@ -107,15 +148,29 @@ class _NewsState extends State<NewsPage> {
               onPressed: () {
                 offset >= 26
                     ? offset -= 26
-                    : throw Exception('Offset is too low');
+                    : showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return new AlertDialog(
+                        title: Text("Error!"),
+                        content: Text("Already on First page"),
+                      );
+                    });
                 offset >= 0
                     ? updateApiUrl("&offset=" + offset.toString())
-                    : throw Exception('Offset is too low');
+                    : showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return new AlertDialog(
+                            title: Text("Error!"),
+                            content: Text("Already on First page"),
+                          );
+                        });
                 updateFeed();
               },
               icon: Icon(Icons.arrow_back),
             ),
-            title: Text("Previous"),
+            label: "Previous",
           ),
           BottomNavigationBarItem(
             icon: IconButton(
@@ -126,7 +181,7 @@ class _NewsState extends State<NewsPage> {
               },
               icon: Icon(Icons.arrow_forward),
             ),
-            title: Text("Next"),
+            label: "Next",
           )
         ],
       ),
@@ -176,6 +231,10 @@ class Search extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     result = query;
+    result.toString();
+    result = result.replaceAll(' ', '%20');
+    result = "&keywords=" + result;
+
     close(context, result);
     return ListTile();
   }
